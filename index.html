@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
+    <script defer src="sketch.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1> Travelling Salesman Problem </h1>
+    <div class = "toolbar">
+        <p id="num"> Num of Points: </p>
+        <div class="slidecontainer">
+            <input type="range" min="1" max="25" value="5" class="slider" id="myRange">
+          </div>
+        <button id="reset" onClick="reset()"> Reset </button>
+        <button id="Brute-Force" onClick="selectAlgorithm(this.id)"> Brute-Force </button>
+        <button id="Greedy" onClick="selectAlgorithm(this.id)"> Greedy </button>
+        <button id="activate" onClick="activate()"> Run </button>
+    </div>
+    
+    <p id="current">Selected Algorithm: </p>
+    <p id="time">Time Complexity: </p>
+    <p id ="info">Evaluation no. 0 | Distance = 0</p>
+
+    
+</body>
+</html>
