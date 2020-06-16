@@ -49,7 +49,7 @@ const slider = document.getElementById("myRange");
 const bruteForceBtn = document.getElementById("Brute-Force");
 
 const time_complexities = {
-    "Greedy":"O(n^2 log2 n)",
+    "Nearest Neighbour":"O(n^2 log2 n)",
     "Brute-Force":"O(n!)",
     "Christofides Algorithm":"O(n^2 log n)"
 }
@@ -117,7 +117,7 @@ function activate(){
     j_index = 0;
 
     switch(algorithm){
-        case "Greedy":
+        case "Nearest Neighbour":
             // Set up variables for algorithm
             visited.push(points[0]);
             unvisited = [...points];
@@ -267,7 +267,7 @@ function draw() {
     tick++;
         if (running){
             switch(algorithm){
-                case "Greedy":
+                case "Nearest Neighbour":
                     if (tick % runSpeed == 0){
                         if(unvisited === []){
                             running = false;
