@@ -30,7 +30,7 @@ let best_dist = LARGE_NUMBER;
 
 let edge_search = false;
 
-let algorithm = "Greedy";
+let algorithm = "Nearest Neighbour";
 
 let adjacencyList;
 
