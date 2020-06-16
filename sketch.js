@@ -16,32 +16,43 @@ let visited = [];
 let unvisited = [];
 let current = null;
 
+let edges = [];
+
 let permutations;
 let perm_index = 0;
 
+let i_index = 0;
+let j_index = 0;
+
 let best = null;
+let best_current = null;
 let best_dist = LARGE_NUMBER;
 
+let edge_search = false;
+
 let algorithm = "Greedy";
+
+let adjacencyList;
+
+let pathToFollow = [];
 
 const canvasX = 600;
 const canvasY = 600;
 
-resetBtn = document.getElementById("reset");
-selectedTxt = document.getElementById("current");
-timeTxt = document.getElementById("time");
-infoTxt = document.getElementById("info");
-pointsNum = document.getElementById("num");
-slider = document.getElementById("myRange");
+const resetBtn = document.getElementById("reset");
+const selectedTxt = document.getElementById("current");
+const timeTxt = document.getElementById("time");
+const infoTxt = document.getElementById("info");
+const pointsNum = document.getElementById("num");
+const slider = document.getElementById("myRange");
 
-bruteForceBtn = document.getElementById("Brute-Force");
+const bruteForceBtn = document.getElementById("Brute-Force");
 
-time_complexities = {
+const time_complexities = {
     "Greedy":"O(n^2 log2 n)",
-    "Brute-Force":"O(n!)"
+    "Brute-Force":"O(n!)",
+    "Christofides Algorithm":"O(n^2 log n)"
 }
-
-
 
 slider.oninput = function() {
     numPts = this.value;
@@ -73,8 +84,10 @@ function selectAlgorithm(new_algorithm){
 
     path = [];
     path.push(points[0]);
-    running = false;
     evolutions = 0;
+
+    best = null;
+    best_dist = LARGE_NUMBER;
     //reset();
 }
 
@@ -100,6 +113,8 @@ function activate(){
 
     evolutions = 0;
 
+    i_index = 0;
+    j_index = 0;
 
     switch(algorithm){
         case "Greedy":
@@ -109,16 +124,89 @@ function activate(){
             unvisited.shift();
             current = points[0];
             break;
+
         case "Brute-Force":
             unvisited = [...points];
             unvisited.shift();
             permutations = permutator(unvisited);
             perm_index = 0;
+            break;
+
+        case "Christofides Algorithm":
+            path = [];
+            edges = [];
+
+        
+            unvisited = [...points];
+            unvisited.splice(0, 1);
+            visited = [];
+            visited.push(points[0]);
+
+            i_index = 0;
+
+            while(unvisited.length > 0){
+                best_dist = LARGE_NUMBER;
+                for (let i=0; i<visited.length;i++){
+                    for (let j=0; j<unvisited.length;j++){
+                        d = getDistance(visited[i].x, visited[i].y, unvisited[j].x, unvisited[j].y);
+                        if (d < best_dist){
+                            best_dist = d;
+                            best = unvisited[j];
+                            current_i = j;
+                            best_current = visited[i];
+                        }
+                    }
+                }
+
+                edges.push([best_current, best]);
+
+                unvisited.splice(current_i, 1);
+                visited.push(best);
+
+            }
+            path = [];
+            for(let i=0; i<edges.length;i++){
+                path.push(edges[i][0]);
+                path.push(edges[i][1]);
+            }
+            
+
+
+            adjacencyList = new Map();
+
+            points.forEach(addNode);
+            edges.forEach(edge => addEdge(...edge));
+
+            path = Array.from(treeRoute(points[0]));
+            path.push(points[0]);
+            break;
     }
-    
-    
-    
-    
+  
+}
+
+function addNode(node){
+    adjacencyList.set(node, []);
+}
+
+function addEdge(origin, destination){
+    adjacencyList.get(origin).push(destination);
+    adjacencyList.get(destination).push(origin);
+}
+
+function treeRoute(origin, visited = new Set()){
+    visited.add(origin);
+    const destinations = adjacencyList.get(origin);
+
+    for(const destination of destinations){
+        if(!visited.has(destination)){
+            result = treeRoute(destination, visited);
+            for (const visit of result){
+                visited.add(visit)
+            }
+        }
+    }
+
+    return visited;
 }
 
 const permutator = (inputArr) => {
@@ -137,7 +225,7 @@ const permutator = (inputArr) => {
    }
   
    permute(inputArr)
-  
+
    return result;
   }
 
@@ -179,8 +267,6 @@ function draw() {
     tick++;
         if (running){
             switch(algorithm){
-                
-                
                 case "Greedy":
                     if (tick % runSpeed == 0){
                         if(unvisited === []){
@@ -235,10 +321,6 @@ function draw() {
                         }
                         perm_index++;
                     }
-
-
-
-
 
                     break;
             }
