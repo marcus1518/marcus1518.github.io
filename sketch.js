@@ -1,12 +1,15 @@
 let numPts = 5;
 let points = [];
 let path = [];
+let progress_path = [];
+let actual_path = [];
 let running = false;
 let isReset = true;
 
 
 let runSpeed = 7;
 let tick = 0;
+let runTime = 0;
 
 const LARGE_NUMBER = 100000000;
 
@@ -155,6 +158,7 @@ function activate(){
                             current_i = j;
                             best_current = visited[i];
                         }
+                        evolutions++;
                     }
                 }
 
@@ -164,10 +168,10 @@ function activate(){
                 visited.push(best);
 
             }
-            path = [];
+            progress_path = [];
             for(let i=0; i<edges.length;i++){
-                path.push(edges[i][0]);
-                path.push(edges[i][1]);
+                progress_path.push(edges[i][0]);
+                progress_path.push(edges[i][1]);
             }
             
 
@@ -177,8 +181,12 @@ function activate(){
             points.forEach(addNode);
             edges.forEach(edge => addEdge(...edge));
 
-            path = Array.from(treeRoute(points[0]));
-            path.push(points[0]);
+
+            actual_path = [];
+            actual_path = Array.from(treeRoute(points[0]));
+            actual_path.push(points[0]);
+
+            runTime = 0;
             break;
     }
   
@@ -322,6 +330,17 @@ function draw() {
                         perm_index++;
                     }
 
+                    break;
+                
+                case "Christofides Algorithm":
+                    if (progress_path != []){
+                        path = progress_path;
+                        runTime++;
+                        if(runTime > 100){
+                            progress_path = [];
+                            path = actual_path;
+                        }
+                    }
                     break;
             }
         }
